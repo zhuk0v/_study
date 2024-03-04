@@ -3,7 +3,7 @@ name: 'C++ CI'
 on:
   push:
     branches:
-      - master
+      - build_test_deploy(google_test)
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
+          release_name: Release (Use GoogleTest) ${{ github.run_number }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
