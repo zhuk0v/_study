@@ -98,7 +98,7 @@ auto read_ip_address(stream_t&& stream) {
 }
 
 auto read_ip_address(int argc, char const* argv []) {
-	return read_ip_address(std::ifstream("/home/sergey/otus/_study/data/ip_filter.tsv"));
+	// return read_ip_address(std::ifstream("/home/sergey/otus/_study/data/ip_filter.tsv"));
 	if (argc == 1) {
 		return read_ip_address(std::cin);
 	}
