@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include <string>
+#include <array>
 #include <vector>
 #include <tuple>
 
@@ -10,10 +11,10 @@
 
 class IpAddress {
 public:
-	std::vector<std::string> m_ip_addresses;
+	std::array<int, 4> m_ip_addresses;
 public:
-	IpAddress(std::vector<std::string>& ip_addresses) : m_ip_addresses(ip_addresses) {}
-	IpAddress(std::vector<std::string>&& ip_addresses) : m_ip_addresses(std::move(ip_addresses)) {}
+	IpAddress(std::vector<std::string>& ip_addresses) : m_ip_addresses() { fill(ip_addresses); }
+	IpAddress(std::vector<std::string>&& ip_addresses) : m_ip_addresses() { fill(ip_addresses); }
 	~IpAddress() = default;
 
 	bool operator==(const IpAddress& rhs) const {
@@ -31,12 +32,10 @@ public:
 
 	bool operator>(const IpAddress& rhs) const {
 		for (std::size_t i = 0; i < std::min(m_ip_addresses.size(), rhs.m_ip_addresses.size()); i++) {
-			auto lhs_val = std::stoi(m_ip_addresses[i]);
-			auto rhs_val = std::stoi(rhs.m_ip_addresses[i]);
-			if (lhs_val > rhs_val) {
+			if (m_ip_addresses[i] > rhs.m_ip_addresses[i]) {
 				return true;
 			}
-			else if (lhs_val == rhs_val) {
+			else if (m_ip_addresses[i] == rhs.m_ip_addresses[i]) {
 				continue;
 			}
 			else {
@@ -51,6 +50,14 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const IpAddress& obj);
+
+private:
+
+	void fill(std::vector<std::string>& ip_addresses) {
+		for (std::size_t i = 0; i < 4; i++) {
+			m_ip_addresses[i] = std::stoi(ip_addresses[i]);
+		}
+	}
 };
 
 std::ostream& operator<<(std::ostream& os, const IpAddress& obj) {
@@ -91,8 +98,7 @@ auto read_ip_address(stream_t&& stream) {
 }
 
 auto read_ip_address(int argc, char const* argv []) {
-	// return read_ip_address(std::ifstream("/home/sergey/otus/_study/data/ip_filter.tsv"));
-
+	return read_ip_address(std::ifstream("/home/sergey/otus/_study/data/ip_filter.tsv"));
 	if (argc == 1) {
 		return read_ip_address(std::cin);
 	}
@@ -106,9 +112,8 @@ auto read_ip_address(int argc, char const* argv []) {
 
 namespace sort_funcs {
 
-	auto&& reverse_lexicographically_sort(std::vector<IpAddress>&& addresses) {
+	void reverse_lexicographically_sort(std::vector<IpAddress>& addresses) {
 		std::sort(addresses.begin(), addresses.end(), [](IpAddress& a, IpAddress& b) { return a > b; });
-		return std::move(addresses);
 	}
 
 
@@ -121,7 +126,7 @@ namespace filter_funcs {
 	}
 
 	template<typename ...Args>
-	auto&& _consistent_filter(std::vector<IpAddress>&& addresses, std::size_t i, std::string subnet, Args&&... arg) {
+	auto&& _consistent_filter(std::vector<IpAddress>&& addresses, std::size_t i, int subnet, Args&&... arg) {
 		addresses.erase(std::remove_if(addresses.begin(), addresses.end(),
 			[&i, &subnet](IpAddress& x) { return x.m_ip_addresses[i] != subnet; }),
 			addresses.end());
@@ -133,17 +138,17 @@ namespace filter_funcs {
 		return _consistent_filter(std::move(addresses), 0, arg...);
 	}
 
-	auto any_filter(std::vector<IpAddress> addresses, std::string subnet) {
+	auto any_filter(std::vector<IpAddress> addresses, int subnet) {
 		addresses.erase(
 			std::remove_if(
 				addresses.begin(),
 				addresses.end(),
 				[&subnet](IpAddress& x) {
-				return !std::any_of(
-					x.m_ip_addresses.cbegin(),
-					x.m_ip_addresses.cend(),
-					[&subnet](const std::string& sn) { return sn == subnet; });
-				}
+			return !std::any_of(
+				x.m_ip_addresses.cbegin(),
+				x.m_ip_addresses.cend(),
+				[&subnet](const auto& sn) { return sn == subnet; });
+		}
 			),
 			addresses.end()
 		);
@@ -168,7 +173,7 @@ int main(int argc, char const* argv []) {
 			return EXIT_FAILURE;
 		}
 		// TODO reverse lexicographically sort
-		ip_addresses = sort_funcs::reverse_lexicographically_sort(std::move(ip_addresses));
+		sort_funcs::reverse_lexicographically_sort(ip_addresses);
 		print_vector(ip_addresses);
 		// 222.173.235.246
 		// 222.130.177.64
@@ -179,7 +184,7 @@ int main(int argc, char const* argv []) {
 		// 1.1.234.8
 
 		// TODO filter by first byte and output
-		auto ip_addresses_f1 = filter_funcs::consistent_filter(ip_addresses, "1");
+		auto ip_addresses_f1 = filter_funcs::consistent_filter(ip_addresses, 1);
 		print_vector(ip_addresses_f1);
 		// 1.231.69.33
 		// 1.87.203.225
@@ -188,7 +193,7 @@ int main(int argc, char const* argv []) {
 		// 1.1.234.8
 
 		// TODO filter by first and second bytes and output
-		auto ip_addresses_f2 = filter_funcs::consistent_filter(ip_addresses, "46", "70");
+		auto ip_addresses_f2 = filter_funcs::consistent_filter(ip_addresses, 46, 70);
 		print_vector(ip_addresses_f2);
 		// 46.70.225.39
 		// 46.70.147.26
@@ -196,7 +201,7 @@ int main(int argc, char const* argv []) {
 		// 46.70.29.76
 
 		// TODO filter by any byte and output
-		auto ip_addresses_f3 = filter_funcs::any_filter(ip_addresses, "46");
+		auto ip_addresses_f3 = filter_funcs::any_filter(ip_addresses, 46);
 		print_vector(ip_addresses_f3);
 		// 186.204.34.46
 		// 186.46.222.194
