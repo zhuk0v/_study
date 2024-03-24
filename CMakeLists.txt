@@ -8,23 +8,23 @@ endif()
 set(PROJECT_VESRION 0.0.${PATCH_NUM})
 
 # Create project name
-project(ipsorter VERSION ${PROJECT_VESRION})
+project(custom_allocator VERSION ${PROJECT_VESRION})
 
 # -----------------------------------------------
 # Create executable file
-add_executable(ipsorter main.cpp)
+add_executable(custom_allocator main.cpp)
 
-set_target_properties(ipsorter PROPERTIES
+set_target_properties(custom_allocator PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
-target_compile_options(ipsorter
+target_compile_options(custom_allocator
     PRIVATE -Wall -Wextra -pedantic -Werror
 )
 
 # -----------------------------------------------
-install(TARGETS ipsorter RUNTIME DESTINATION bin)
+install(TARGETS custom_allocator RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")

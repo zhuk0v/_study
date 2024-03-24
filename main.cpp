@@ -1,245 +1,102 @@
-#include <iostream>
-#include <fstream>
-
-#include <string>
-#include <array>
+#include <cstdlib>
 #include <vector>
-#include <tuple>
+#include <map>
 
-#include <utility>
-#include <algorithm>
+#include <iostream>
 
-class IpAddress {
-public:
-	std::array<int, 4> m_ip_addresses;
-public:
-	IpAddress(std::vector<std::string>& ip_addresses) : m_ip_addresses() { fill(ip_addresses); }
-	IpAddress(std::vector<std::string>&& ip_addresses) : m_ip_addresses() { fill(ip_addresses); }
-	~IpAddress() = default;
+#include "cust_alloc.hpp"
 
-	bool operator==(const IpAddress& rhs) const {
-		if (m_ip_addresses.size() != rhs.m_ip_addresses.size()) {
-			return false;
-		}
+#define UNUSE(x) (void)(x)
 
-		for (std::size_t i = 0; i < m_ip_addresses.size(); i++) {
-			if (m_ip_addresses[i] != rhs.m_ip_addresses[i]) {
-				return false;
-			}
-		}
-		return true;
-	}
 
-	bool operator>(const IpAddress& rhs) const {
-		for (std::size_t i = 0; i < std::min(m_ip_addresses.size(), rhs.m_ip_addresses.size()); i++) {
-			if (m_ip_addresses[i] > rhs.m_ip_addresses[i]) {
-				return true;
-			}
-			else if (m_ip_addresses[i] == rhs.m_ip_addresses[i]) {
-				continue;
-			}
-			else {
-				return false;
-			}
-		}
-		return false;
-	}
 
-	bool operator<(const IpAddress& rhs) const {
-		return rhs > *this;
-	}
+template <typename Key, typename Tp>
+using map_1 = std::map<Key, Tp>;
 
-	friend std::ostream& operator<<(std::ostream& os, const IpAddress& obj);
+template <typename T>
+using vct_1 = std::vector<T>;
 
-private:
+template <typename Key, typename Tp, std::size_t N, bool Fix>
+using resource_map = custom::AllocatorResource<std::pair<const Key, Tp>, N, Fix>;
 
-	void fill(std::vector<std::string>& ip_addresses) {
-		for (std::size_t i = 0; i < 4; i++) {
-			m_ip_addresses[i] = std::stoi(ip_addresses[i]);
-		}
+template <typename Key, typename Tp>
+using map_2 = std::pmr::map<Key, Tp>;
+
+template <typename T, std::size_t N, bool Fix>
+using resource_vct = custom::AllocatorResource<T, N, Fix>;
+
+template <typename T>
+using vct_2 = std::pmr::vector<T>;
+
+
+auto fill_map = [](auto& l_map) {
+	// заполнение 10 элементами, где ключ - это число от 0 до 9, а значение - факториал ключа
+	l_map[0] = 1;
+	for (std::size_t i = 1; i < 10; i++) {
+		l_map[i] = l_map[i - 1] * i;
 	}
 };
 
-std::ostream& operator<<(std::ostream& os, const IpAddress& obj) {
-	for (auto ip_part = obj.m_ip_addresses.cbegin(); ip_part != obj.m_ip_addresses.cend(); ++ip_part) {
-		if (ip_part != obj.m_ip_addresses.cbegin()) {
-			os << ".";
-		}
-		os << *ip_part;
+auto print_map = [](const auto& l_map) {
+	// вывод на экран всех значений (ключ и значение разделены пробелом) хранящихся в контейнере
+	for (const auto& pair : l_map) {
+		std::cout << pair.first << " " << pair.second << std::endl;
 	}
-	os << std::endl;
-	return os;
-}
+};
 
-std::vector<std::string> split(const std::string& str, char d) {
-	std::vector<std::string> r;
-	std::string::size_type start = 0;
-	std::string::size_type stop = str.find_first_of(d);
-	while (stop != std::string::npos) {
-		r.push_back(str.substr(start, stop - start));
-
-		start = stop + 1;
-		stop = str.find_first_of(d, start);
+auto fill_vector = [](auto& l_vect) {
+	// заполнение 10 элементами от 0 до 9
+	for (std::size_t i = 0; i < 10; i++) {
+		l_vect.push_back(i);
 	}
-	r.push_back(str.substr(start));
-	return r;
-}
+};
 
-template <typename stream_t>
-auto read_ip_address(stream_t&& stream) {
-	std::vector<IpAddress> ip_pool{};
-
-	std::string line;
-	for (std::string line; !stream.eof() && std::getline(stream, line);) {
-		std::vector<std::string> v = split(line, '\t');
-		ip_pool.push_back(split(v.at(0), '.'));
+auto print_vector = [](const auto& l_vect) {
+	// вывод на экран всех значений, хранящихся в контейнере
+	for (const auto& el : l_vect) {
+		std::cout << el << std::endl;
 	}
-	return ip_pool;
-}
-
-auto read_ip_address(int argc, char const* argv []) {
-	// return read_ip_address(std::ifstream("/home/sergey/otus/_study/data/ip_filter.tsv"));
-	if (argc == 1) {
-		return read_ip_address(std::cin);
-	}
-	else if (argc == 2) {
-		return read_ip_address(std::ifstream(argv[1]));
-	}
-	else {
-		throw std::logic_error("Unexpected behaviour");
-	}
-}
-
-namespace sort_funcs {
-
-	void reverse_lexicographically_sort(std::vector<IpAddress>& addresses) {
-		std::sort(addresses.begin(), addresses.end(), [](IpAddress& a, IpAddress& b) { return a > b; });
-	}
-
-
-}
-
-namespace filter_funcs {
-
-	auto&& _consistent_filter(std::vector<IpAddress>&& addresses, std::size_t) {
-		return std::move(addresses);
-	}
-
-	template<typename ...Args>
-	auto&& _consistent_filter(std::vector<IpAddress>&& addresses, std::size_t i, int subnet, Args&&... arg) {
-		addresses.erase(std::remove_if(addresses.begin(), addresses.end(),
-			[&i, &subnet](IpAddress& x) { return x.m_ip_addresses[i] != subnet; }),
-			addresses.end());
-		return _consistent_filter(std::move(addresses), ++i, arg...);
-	}
-
-	template<typename ...Args>
-	auto consistent_filter(std::vector<IpAddress> addresses, Args&&... arg) {
-		return _consistent_filter(std::move(addresses), 0, arg...);
-	}
-
-	auto any_filter(std::vector<IpAddress> addresses, int subnet) {
-		addresses.erase(
-			std::remove_if(
-				addresses.begin(),
-				addresses.end(),
-				[&subnet](IpAddress& x) {
-			return !std::any_of(
-				x.m_ip_addresses.cbegin(),
-				x.m_ip_addresses.cend(),
-				[&subnet](const auto& sn) { return sn == subnet; });
-		}
-			),
-			addresses.end()
-		);
-		return addresses;
-	}
-
-
-}
-
-void print_vector(std::vector<IpAddress>& addresses) {
-	for (auto ip_address = addresses.cbegin(); ip_address != addresses.cend(); ++ip_address) {
-		std::cout << *ip_address;
-	}
-}
+};
 
 
 int main(int argc, char const* argv []) {
-	try {
-		auto ip_addresses = read_ip_address(argc, argv);
+	UNUSE(argc);
+	UNUSE(argv);
 
-		if (ip_addresses.empty()) {
-			return EXIT_FAILURE;
-		}
-		// TODO reverse lexicographically sort
-		sort_funcs::reverse_lexicographically_sort(ip_addresses);
-		print_vector(ip_addresses);
-		// 222.173.235.246
-		// 222.130.177.64
-		// 222.82.198.61
-		// ...
-		// 1.70.44.170
-		// 1.29.168.152
-		// 1.1.234.8
+	const std::size_t num_elements = 5;
+	const bool fix_my_mem = false;
 
-		// TODO filter by first byte and output
-		auto ip_addresses_f1 = filter_funcs::consistent_filter(ip_addresses, 1);
-		print_vector(ip_addresses_f1);
-		// 1.231.69.33
-		// 1.87.203.225
-		// 1.70.44.170
-		// 1.29.168.152
-		// 1.1.234.8
+	// создание экземпляра std::map<int, int>
+	map_1<int, int> factorials;
+	// заполнение 10 элементами, где ключ - это число от 0 до 9, а значение - факториал ключа
+	fill_map(factorials);
 
-		// TODO filter by first and second bytes and output
-		auto ip_addresses_f2 = filter_funcs::consistent_filter(ip_addresses, 46, 70);
-		print_vector(ip_addresses_f2);
-		// 46.70.225.39
-		// 46.70.147.26
-		// 46.70.113.73
-		// 46.70.29.76
+	// выделение памяти
+	resource_map <int, int, num_elements, fix_my_mem> map_2_res;
+	// создание экземпляра std::map<int, int> с новым аллокатором, ограниченным 10 элементами
+	map_2<int, int> factorials_with_cust_alloc(&map_2_res);
+	// заполнение 10 элементами, где ключ - это число от 0 до 9, а значение - факториал ключа
+	fill_map(factorials_with_cust_alloc);
 
-		// TODO filter by any byte and output
-		auto ip_addresses_f3 = filter_funcs::any_filter(ip_addresses, 46);
-		print_vector(ip_addresses_f3);
-		// 186.204.34.46
-		// 186.46.222.194
-		// 185.46.87.231
-		// 185.46.86.132
-		// 185.46.86.131
-		// 185.46.86.131
-		// 185.46.86.22
-		// 185.46.85.204
-		// 185.46.85.78
-		// 68.46.218.208
-		// 46.251.197.23
-		// 46.223.254.56
-		// 46.223.254.56
-		// 46.182.19.219
-		// 46.161.63.66
-		// 46.161.61.51
-		// 46.161.60.92
-		// 46.161.60.35
-		// 46.161.58.202
-		// 46.161.56.241
-		// 46.161.56.203
-		// 46.161.56.174
-		// 46.161.56.106
-		// 46.161.56.106
-		// 46.101.163.119
-		// 46.101.127.145
-		// 46.70.225.39
-		// 46.70.147.26
-		// 46.70.113.73
-		// 46.70.29.76
-		// 46.55.46.98
-		// 46.49.43.85
-		// 39.46.86.85
-		// 5.189.203.46
-	}
-	catch (const std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
+	// вывод на экран всех значений (ключ и значение разделены пробелом) хранящихся в контейнере
+	print_map(factorials);
+	print_map(factorials_with_cust_alloc);
+
+	// создание экземпляра своего контейнера для хранения значений типа int
+	vct_1<int> seq;
+	// заполнение 10 элементами от 0 до 9
+	fill_vector(seq);
+
+	// выделение памяти
+	resource_vct <int, num_elements, fix_my_mem> vct_2_res;
+	// создание экземпляра своего контейнера для хранения значений типа int
+	vct_2<int> seq_with_cust_alloc(&vct_2_res);
+	// заполнение 10 элементами от 0 до 9
+	fill_vector(seq_with_cust_alloc);
+
+	// вывод на экран всех значений, хранящихся в контейнере
+	print_vector(seq);
+	print_vector(seq_with_cust_alloc);
+
 	return EXIT_SUCCESS;
 }
