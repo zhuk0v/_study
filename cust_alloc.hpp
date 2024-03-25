@@ -24,7 +24,7 @@ namespace custom {
 
         AllocatorResource() {
             // std::cout << "Alloc. create " << m_max_bytes << " bytes" << std::endl;
-            first_cell = gey_new(m_max_bytes);
+            first_cell = get_new(m_max_bytes);
             cur_cell = first_cell;
         }
 
@@ -45,7 +45,7 @@ namespace custom {
                     throw std::bad_alloc();
                 }
                 else {
-                    cur_cell->next = gey_new(bytes > m_max_bytes ? bytes : m_max_bytes);
+                    cur_cell->next = get_new(bytes > m_max_bytes ? bytes : m_max_bytes);
                     cur_cell = cur_cell->next;
                 }
             }
@@ -65,7 +65,7 @@ namespace custom {
             return true;
         }
 
-        Cell* gey_new(size_t bytes) {
+        Cell* get_new(size_t bytes) {
             Cell* ptr_cell = (Cell*)malloc(sizeof(Cell));
             if (!ptr_cell) {
                 throw std::bad_alloc();
