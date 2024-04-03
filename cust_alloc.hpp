@@ -2,7 +2,7 @@
 
 #include <memory_resource>
 
-#include <iostream>
+// #include <iostream>
 #include <cstring>
 
 namespace custom {
@@ -10,6 +10,7 @@ namespace custom {
     template <typename T, std::size_t N, bool Fix>
     struct AllocatorResource : public std::pmr::memory_resource {
         using value_type = T;
+        
         const std::size_t m_max_bytes = N * sizeof(T);
 
         struct Cell {
