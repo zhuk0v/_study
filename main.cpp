@@ -7,6 +7,7 @@
 #include "cust_alloc.hpp"
 #include "cust_classic_alloc.hpp"
 #include "cust_container.hpp"
+#include "cust_container_with_classic_alloc.hpp"
 
 #define UNUSE(x) (void)(x)
 
@@ -42,10 +43,8 @@ using map_3 = std::map<Key, Tp, std::less<Key>, custom::AllocatorClassic<std::pa
 template <typename T, std::size_t N, bool Fix>
 using vct_3 = std::vector<T, custom::AllocatorClassic<T, N, Fix>>;
 
-// template <typename T>
-// using cnt_2 = custom::Container<T>;
-
-
+template <typename T, std::size_t N, bool Fix>
+using cnt_2 = custom::ContainerClassic<T, custom::AllocatorClassic<T, N, Fix>>;
 
 
 auto fill_map = [](auto& l_map) {
@@ -141,6 +140,18 @@ int main(int argc, char const* argv []) {
 	// for (auto& el : seq_with_cust_cont_and_cust_alloc) {
 	// 	std::cout << el << std::endl;
 	// }
+
+	// создание экземпляра своего контейнера для хранения значений типа int
+	cnt_2<int, num_elements, fix_my_mem> seq_with_cust_cont_and_cust_alloc{};
+	// заполнение 10 элементами от 0 до 9
+	for (std::size_t i = 0; i < 10; i++) {
+		seq_with_cust_cont_and_cust_alloc.append(i);
+	}
+	// вывод на экран всех значений, хранящихся в контейнере
+	for (auto& el : seq_with_cust_cont_and_cust_alloc) {
+		std::cout << el << std::endl;
+	}
+
 
 	return EXIT_SUCCESS;
 }

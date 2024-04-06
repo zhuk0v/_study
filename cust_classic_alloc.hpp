@@ -35,15 +35,6 @@ namespace custom {
             delete_and_get_next(first_cell);
         }
 
-        // template <class U>
-        // AllocatorClassic(const AllocatorClassic <U>& a) noexcept {
-        //
-        // }
-
-        // AllocatorClassic select_on_container_copy_construction() const {
-        //     return AllocatorClassic();
-        // }
-
         T* allocate(std::size_t n) {
             // std::cout << "Size type " << sizeof(T) << " " << std::endl;
             // std::cout << "Alloc " << n * sizeof(T) << " bytes" << std::endl;
