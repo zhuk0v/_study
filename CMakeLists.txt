@@ -8,23 +8,29 @@ endif()
 set(PROJECT_VESRION 0.0.${PATCH_NUM})
 
 # Create project name
-project(print_ip_sfinae VERSION ${PROJECT_VESRION})
+project(editor VERSION ${PROJECT_VESRION})
 
 # -----------------------------------------------
-# Create executable file
-add_executable(print_ip_sfinae main.cpp)
 
-set_target_properties(print_ip_sfinae PROPERTIES
+set(SOURCE_EXE 
+  "editor.cpp"
+  "file.cpp"
+  "main.cpp")
+
+# Create executable file
+add_executable(${PROJECT_NAME} ${SOURCE_EXE})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
-target_compile_options(print_ip_sfinae
-    PRIVATE -Wall -Wextra -pedantic -Werror
-)
+# target_compile_options(editor
+#     PRIVATE -Wall -Wextra -pedantic -Werror
+# )
 
 # -----------------------------------------------
-install(TARGETS print_ip_sfinae RUNTIME DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
