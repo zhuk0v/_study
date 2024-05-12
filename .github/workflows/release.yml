@@ -3,7 +3,7 @@ name: 'C++ CI'
 on:
   push:
     branches:
-      - allocator
+      - matrix
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
-          release_name: Release (Custom allocator) ${{ github.run_number }}
+          release_name: Release (Matrix) ${{ github.run_number }}
           draft: false
           prerelease: false
       - name: Upload Release Asset

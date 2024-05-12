@@ -8,23 +8,23 @@ endif()
 set(PROJECT_VESRION 0.0.${PATCH_NUM})
 
 # Create project name
-project(custom_allocator VERSION ${PROJECT_VESRION})
+project(matr VERSION ${PROJECT_VESRION})
 
 # -----------------------------------------------
 # Create executable file
-add_executable(custom_allocator main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 
-set_target_properties(custom_allocator PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
-target_compile_options(custom_allocator
+target_compile_options(${PROJECT_NAME}
     PRIVATE -Wall -Wextra -pedantic -Werror
 )
 
 # -----------------------------------------------
-install(TARGETS custom_allocator RUNTIME DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
