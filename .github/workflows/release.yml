@@ -3,7 +3,7 @@ name: 'C++ CI'
 on:
   push:
     branches:
-      - matrix
+      - bulk
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
-          release_name: Release (Matrix) ${{ github.run_number }}
+          release_name: Release (bulk) ${{ github.run_number }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -33,6 +33,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./matr-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: matr-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./bulk-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: bulk-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package

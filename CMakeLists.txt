@@ -8,7 +8,7 @@ endif()
 set(PROJECT_VESRION 0.0.${PATCH_NUM})
 
 # Create project name
-project(matr VERSION ${PROJECT_VESRION})
+project(bulk VERSION ${PROJECT_VESRION})
 
 # -----------------------------------------------
 # Create executable file
