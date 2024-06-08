@@ -8,11 +8,15 @@ endif()
 set(PROJECT_VESRION 0.0.${PATCH_NUM})
 
 # Create project name
-project(bulk VERSION ${PROJECT_VESRION})
+project(bayan VERSION ${PROJECT_VESRION})
 
 # -----------------------------------------------
 # Create executable file
 add_executable(${PROJECT_NAME} main.cpp)
+
+# Add Boost
+find_package(Boost COMPONENTS program_options REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
@@ -21,6 +25,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE -Wall -Wextra -pedantic -Werror
+)
+
+target_link_libraries(${PROJECT_NAME} 
+    PRIVATE ${Boost_LIBRARIES}
 )
 
 # -----------------------------------------------

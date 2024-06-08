@@ -71,10 +71,11 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "shared_mutex": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "*.ipp": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}",
-        "args": [3]
+        "args": ["-D" "/home/sergey/otus/_study/example_data" "-E" "/home/sergey/otus/_study/example_data/copy_other_dir_for_exlude" "-L" 1 "-F" 1 "-M" "*" "-S" 5 "-H" "crc32"]
     }
 }
