@@ -13,6 +13,7 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update
+      - run: sudo apt-get install libboost-all-dev -y
       - run: cmake .
       - run: cmake --build .
       - run: cmake --build . --target package
