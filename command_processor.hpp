@@ -6,7 +6,6 @@
 #include "command.hpp"
 #include "command_obervers.hpp"
 
-
 class PublisherCommands {
 protected:
     std::vector<std::weak_ptr<ObserverCommand>> m_vect_cmd_observers;
@@ -15,14 +14,23 @@ public:
         m_vect_cmd_observers.push_back(ptr_cmd_observer);
     }
 
-    void NotifySubscribers(std::vector<Command>& cmds) {
+    void AppendCommands(std::vector<Command>& cmds) {
         for (auto& ptr_observer : m_vect_cmd_observers) {
             auto use_ptr = ptr_observer.lock();
             if (use_ptr) {
-                use_ptr->NotifyAboutCommand(cmds);
+                use_ptr->AppendCommands(cmds);
             }
         }
         cmds.clear();
+    }
+
+    void NotifySubscribers() {
+        for (auto& ptr_observer : m_vect_cmd_observers) {
+            auto use_ptr = ptr_observer.lock();
+            if (use_ptr) {
+                use_ptr->NotifyAboutCommand();
+            }
+        }
     }
 };
 
@@ -32,7 +40,7 @@ private:
     std::vector<Command> commands;
 public:
     CmdProc(std::size_t n) : n_inp_cmd(n) {}
-    ~CmdProc() {}
+    ~CmdProc() = default;
 
     void poll(std::istream& in) {
         Command cmd{};
@@ -40,29 +48,35 @@ public:
         for (auto i = 0; ; i++) {
 
             if (commands.size() == n_inp_cmd) {
-                NotifySubscribers(commands);
+                AppendCommands(commands);
+            }
+
+            if (in.eof()) {
+                break;
             }
 
             in >> cmd;
 
             if (cmd.IsOpenBlock()) {
                 if (commands.size() != 0) {
-                    NotifySubscribers(commands);
+                    AppendCommands(commands);
                 }
                 if (poll_dyn_block(in, cmd)) {
-                    NotifySubscribers(commands);
+                    AppendCommands(commands);
                     continue;
                 }
                 break;
             }
 
             if (cmd.IsEnd()) {
-                NotifySubscribers(commands);
+                AppendCommands(commands);
                 break;
             }
 
             commands.push_back(cmd);
         }
+
+        NotifySubscribers();
     }
 
 private:

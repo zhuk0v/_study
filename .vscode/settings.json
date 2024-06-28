@@ -71,7 +71,9 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "shared_mutex": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "csignal": "cpp",
+        "codecvt": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}",
