@@ -3,15 +3,12 @@
 #include <memory>
 #include <chrono>
 #include <queue>
+#include <atomic>
 #include <condition_variable>
 #include <iostream>
 #include <fstream>
 #include <thread>
 #include <functional>
-
-#include <boost/asio/thread_pool.hpp>
-#include <boost/asio/post.hpp>
-#include <boost/asio/wait_traits.hpp>
 
 class ObserverCommand {
 protected:
@@ -86,11 +83,6 @@ private:
                     break;
                 }
             }
-
-            // while (!m_cmd_queue.empty()) {
-            //     OutputCommandsImpl(m_cmd_queue.front());
-            //     m_cmd_queue.pop();
-            // }
 
             std::vector<Command> cmds{};
             while (true) {

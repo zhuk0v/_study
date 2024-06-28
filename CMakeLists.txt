@@ -21,10 +21,6 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_LIB})
 # Add threads
 find_package(Threads REQUIRED)
 
-# Add Boost
-find_package(Boost COMPONENTS program_options REQUIRED)
-include_directories(${Boost_INCLUDE_DIR})
-
 set_target_properties(${PROJECT_NAME} PROPERTIES
   CXX_STANDARD 17
   CXX_STANDARD_REQUIRED ON
