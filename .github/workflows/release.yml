@@ -24,7 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
-          release_name: Release (async_bulk) ${{ github.run_number }}
+          release_name: Release (server_bulk) ${{ github.run_number }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -34,6 +34,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./async-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: async-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./bulk_server-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: bulk_server-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
