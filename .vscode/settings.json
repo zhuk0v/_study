@@ -73,10 +73,14 @@
         "shared_mutex": "cpp",
         "cfenv": "cpp",
         "csignal": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "coroutine": "cpp",
+        "source_location": "cpp",
+        "future": "cpp",
+        "*.ipp": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}",
-        "args": [3]
+        "args": [9000, 3]
     }
 }
