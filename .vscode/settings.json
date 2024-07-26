@@ -81,6 +81,6 @@
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}",
-        "args": [9000, 3]
+        "args": []
     }
 }

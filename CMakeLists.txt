@@ -5,10 +5,11 @@ if(DEFINED ENV{GITHUB_RUN_NUMBER})
 else()
   set(PATCH_NUM 1)
 endif()
+# Version
 set(PROJECT_VESRION 0.0.${PATCH_NUM})
 
 # Create project name
-project(bulk VERSION ${PROJECT_VESRION})
+project(pdc VERSION ${PROJECT_VESRION})
 
 # -----------------------------------------------
 # Dependencies
@@ -22,18 +23,18 @@ include_directories(${Boost_INCLUDE_DIR})
 
 # -----------------------------------------------
 # Library
-set(SOURCE_LIB
-  "async.cpp")
+# set(SOURCE_LIB
+#   "async.cpp")
 
-set (PROJECT_LIB_NAME "async")
+# set (PROJECT_LIB_NAME "async")
 
-# Create library file
-add_library(${PROJECT_LIB_NAME} SHARED ${SOURCE_LIB})
+# # Create library file
+# add_library(${PROJECT_LIB_NAME} SHARED ${SOURCE_LIB})
 
-set_target_properties(${PROJECT_LIB_NAME} PROPERTIES
-  CXX_STANDARD 17
-  CXX_STANDARD_REQUIRED ON
-)
+# set_target_properties(${PROJECT_LIB_NAME} PROPERTIES
+#   CXX_STANDARD 17
+#   CXX_STANDARD_REQUIRED ON
+# )
 
 # target_compile_options(${PROJECT_NAME}
 #     PRIVATE -Wall -Wextra -pedantic -Werror
