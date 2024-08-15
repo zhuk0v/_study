@@ -77,10 +77,14 @@
         "coroutine": "cpp",
         "source_location": "cpp",
         "future": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "valarray": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}",
         "args": []
-    }
+    },
+    "cSpell.words": [
+        "ctpl"
+    ]
 }

@@ -1,1 +1,1 @@
-CI/CD examples
+Очередь данных по схеме Producer-Consumer для многопоточных приложений

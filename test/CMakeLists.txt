@@ -22,40 +22,32 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 # -----------------------------------------------
-# Library
-# set(SOURCE_LIB
-#   "async.cpp")
-
-# set (PROJECT_LIB_NAME "async")
-
-# # Create library file
-# add_library(${PROJECT_LIB_NAME} SHARED ${SOURCE_LIB})
-
-# set_target_properties(${PROJECT_LIB_NAME} PROPERTIES
-#   CXX_STANDARD 17
-#   CXX_STANDARD_REQUIRED ON
-# )
-
-# target_compile_options(${PROJECT_NAME}
-#     PRIVATE -Wall -Wextra -pedantic -Werror
-# )
-
-# -----------------------------------------------
 # Test executable file
 set(SOURCE_EXE  
-  "main.cpp")
+  "test_1.cpp")
 
-set (PROJECT_EXE_NAME "${PROJECT_NAME}_server")
+set (TEST_1_EXE_NAME "${PROJECT_NAME}_test_1")
 
 # Create executable file
-add_executable(${PROJECT_EXE_NAME} ${SOURCE_EXE})
+add_executable(${TEST_1_EXE_NAME} ${SOURCE_EXE})
 
-# Add libraries
-target_link_libraries(${PROJECT_EXE_NAME}
-  PRIVATE ${PROJECT_LIB_NAME})
+# Add directories
+target_include_directories(${TEST_1_EXE_NAME}
+  PUBLIC ../include/pdc)
+
+# Add properties
+set_target_properties(${TEST_1_EXE_NAME} PROPERTIES
+  CXX_STANDARD 20
+  CXX_STANDARD_REQUIRED ON
+)
+
+# Add options
+target_compile_options(${TEST_1_EXE_NAME}
+    PRIVATE -Wall -Wextra -pedantic -Werror
+)
 
 # -----------------------------------------------
-install(TARGETS ${PROJECT_EXE_NAME} RUNTIME DESTINATION bin)
+install(TARGETS ${TEST_1_EXE_NAME} RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
