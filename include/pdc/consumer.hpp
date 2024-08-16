@@ -42,9 +42,9 @@ namespace pdc {
         void Subscribe(const Dataname name, FuncT f) override {
             // Debug
             // std::cout << "Subscribe to " << name << " topic. " << "Address callback function " << &f << std::endl;
-            if (!f) {
+            // if (!f) {
                 // std::cout << "Callback function empty. " << std::endl;
-            }
+            // }
 
             // Save callback function
             m_callback = f;

@@ -322,7 +322,7 @@ namespace pdc {
         void operator=(const Distributor&) = delete;
         void operator=(Distributor&&) = delete;
 
-        static DistributorImpl& GetInstance() {
+        static Distributor& GetInstance() {
             static Distributor instance;
             return instance;
         }
