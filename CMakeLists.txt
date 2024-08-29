@@ -38,10 +38,6 @@ set (EXE_NAME "${PROJECT_NAME}")
 # Create executable file
 add_executable(${EXE_NAME} ${SOURCE_EXE})
 
-# Add directories
-target_include_directories(${EXE_NAME}
-  PUBLIC ../include/pdc)
-
 # Add link to library
 target_link_libraries(${EXE_NAME} fmt::fmt)
 target_link_libraries (${EXE_NAME} SQLite::SQLite3)
