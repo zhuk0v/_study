@@ -3,7 +3,7 @@ name: 'PDC C++ Library'
 on:
   push:
     branches:
-      - PDC
+      - db
 
 jobs:
   build:
@@ -14,7 +14,9 @@ jobs:
           submodules: true
       - run: sudo apt-get update
       - run: sudo apt-get install libboost-all-dev -y
-      - run: cmake -S ./test -B .
+      - run: sudo apt-get install sqlite3 -y
+      - run: sudo apt-get install libsqlite3-dev -y
+      - run: cmake -S . -B .
       - run: cmake --build .
       - run: cmake --build . --target package
       - name: Create Release
@@ -24,7 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
-          release_name: Release (PDC) ${{ github.run_number }}
+          release_name: Release (DB) ${{ github.run_number }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
