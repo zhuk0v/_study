@@ -14,6 +14,7 @@ jobs:
           submodules: true
       - run: sudo apt-get update
       - run: sudo apt-get install libboost-all-dev -y
+      - run: sudo apt-get install libfmt-dev -y
       - run: sudo apt-get install sqlite3 -y
       - run: sudo apt-get install libsqlite3-dev -y
       - run: cmake -S . -B .
